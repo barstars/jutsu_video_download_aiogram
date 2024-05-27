@@ -1,12 +1,17 @@
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Bot, Dispatcher, F
+from aiogram.types import Message
+from aiogram.filters import Command, CommandStart
+
 from respons import Jutdotsu
 import os
 from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+import shutil
+import asyncio
 
 # Инициализация бота
 bot = Bot('5653379571:AAHxBnsmvFSdr8Iq7P_iof7-nlIGOIL2WTU')
-dp = Dispatcher(bot)
+dp = Dispatcher()
 
 # ID пользователя, которому вы хотите отправить видео
 #userid = 5713655983
@@ -33,8 +38,8 @@ def split_video(video_path, userid, res):
         start_time = end_time
 
 
-@dp.message_handler(commands=['help'])
-async def help(message: types.Message):
+@dp.message(Command('help'))
+async def help(message: Message):
     await message.answer("""Первый страка это метод:
 1: это url прямого видео
 второй строка url(url и метод должны совпадать)
@@ -48,14 +53,14 @@ async def help(message: types.Message):
 https://jut.su/shingekii-no-kyojin/season-1/episode-1.html
 360""")
 
-@dp.message_handler(content_types=['text'])
-async def send_video(message: types.Message):
+@dp.message()
+async def send_video(message: Message):
     try:
         userid = str(message.chat.id)
         if not os.path.exists(userid):
             os.makedirs(userid)
         else:
-            os.remove(userid)
+            shutil.rmtree(userid)
         method, url, res = (message.text).split("\n")
         try:
             await message.answer("Видео скачивается.")
@@ -73,11 +78,14 @@ async def send_video(message: types.Message):
             await message.answer("Видео успешно отправлено.")
 
             # Удаляем файл после отправки
-            os.remove(userid)
+            shutil.rmtree(userid)
         except Exception as e:
             await message.answer(f"Произошла ошибка при отправке видео: {e}")
     except Exception as e:
         await message.answer(f"Произошла ошибка: {e}")
-    
 
-executor.start_polling(dp)
+async def main():
+    await dp.start_polling(bot)
+    
+if __name__ == '__main__':
+    asyncio.run(main())

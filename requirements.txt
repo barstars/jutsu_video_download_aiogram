@@ -16,6 +16,7 @@ frozenlist==1.4.1
 idna==3.7
 imageio==2.34.1
 imageio-ffmpeg==0.4.9
+lxml==5.2.2
 magic-filter==1.0.12
 moviepy==1.0.3
 multidict==6.0.5
