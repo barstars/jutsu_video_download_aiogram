@@ -1,6 +1,7 @@
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message
 from aiogram.filters import Command, CommandStart
+from aiogram.types.input_file import FSInputFile
 
 from respons import Jutdotsu
 import os
@@ -57,10 +58,9 @@ https://jut.su/shingekii-no-kyojin/season-1/episode-1.html
 async def send_video(message: Message):
     try:
         userid = str(message.chat.id)
-        if not os.path.exists(userid):
-            os.makedirs(userid)
-        else:
+        if os.path.exists(userid):
             shutil.rmtree(userid)
+        os.makedirs(userid)
         method, url, res = (message.text).split("\n")
         try:
             await message.answer("Видео скачивается.")
@@ -72,8 +72,8 @@ async def send_video(message: Message):
             await message.answer("Видео успешно вырезано. Видео отправляется.")
             for i in os.listdir(userid):
                 if i != f"{userid}.mp4":
-                    with open(f"{userid}/{i}", 'rb') as video_file:
-                        await message.answer_video(video_file)
+                    video_input = FSInputFile(path=f"{userid}/{i}")
+                    await bot.send_video(chat_id=message.chat.id, video=video_input)
 
             await message.answer("Видео успешно отправлено.")
 
