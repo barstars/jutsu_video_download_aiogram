@@ -11,7 +11,7 @@ import shutil
 import asyncio
 
 # Инициализация бота
-bot = Bot('5653379571:AAHxBnsmvFSdr8Iq7P_iof7-nlIGOIL2WTU')
+bot = Bot('TOKEN')
 dp = Dispatcher()
 
 # ID пользователя, которому вы хотите отправить видео
